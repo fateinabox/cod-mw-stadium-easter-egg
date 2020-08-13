@@ -6,14 +6,75 @@
 
 #Executive code: CH345678
 
-numbers = ["0","1","2","3","4","5","6","7","8","9"]
-code = "HHHHHHHH"
+numbers = [0,1,2,3,4,5,6,7,8,9]
+nums=[]
+code = "FFFFFFFF"
 positions = []
 card = []
+numCards = 0
+codelist = []
 
+def split(word):
+    return [ char for char in word ]
+
+
+def china_room(numbers,list,cnt=0):
+    for i in numbers:
+        temp_lst_a = [lst if lst!="h" else str(i) for lst in list]
+
+        for j in numbers:
+            if j != i:
+                codelist.append(int("".join([lst if lst!="n" else str(j) for lst in temp_lst_a])))
+                cnt+=1
+
+def house_room(numbers,nums,list,cnt=0):
+    for i in nums:
+        temp_lst_a = [lst if lst!="h" else str(i) for lst in list]
+        for j in numbers:
+           for k in numbers:
+               if k!=j:
+                   temp_lst_b = [lst if lst!="c" else str(j) for lst in temp_lst_a]
+                   codelist.append(int("".join([lst if lst!="n" else str(k) for lst in temp_lst_b])))
+                   cnt+=1
+def nose_room(numbers,nums,list,cnt=0):
+    for i in nums:
+        temp_lst_a = [lst if lst!="n" else str(i) for lst in list]
+        for j in numbers:
+           for k in numbers:
+               if k!=j:
+                   temp_lst_b = [lst if lst!="c" else str(j) for lst in temp_lst_a]
+                   codelist.append(int("".join([lst if lst!="h" else str(k) for lst in temp_lst_b])))
+                   cnt+=1
+
+def nBrute(code):
+    lCode = split(code)
+
+    for i in lCode:
+        if i.isnumeric():
+            nums.append(int(i))
+    for i in nums:
+        numbers.remove(i)
+    if "c" not in lCode:
+        china_room(numbers,lCode)
+    if lCode.count("h") == 1:
+        house_room(numbers,nums,lCode)
+    if lCode.count("h") == 2 and lCode.count("c") == 1:
+        nose_room(numbers,nums,lCode)
+    
+    output = list(dict.fromkeys(codelist))
+
+    print(output)
+    print(str(len(output)) + " Possibilities")
+    
+    
 def bruteforce(code):
+
     code = code.lower()
     count = 0
+
+    nBrute(code)
+
+    return 0
     for i in range( len(code) ):
         if code[i] not in numbers:
             count = count+1
@@ -28,7 +89,7 @@ def bruteforce(code):
 
     if len(positions) == 2:
             for x in numbers:
-                tcode = tcode[:positions[0]] + x + tcode[positions[0]+1:]
+                tcode = gen(position[0])
                 
                 for y in numbers:
                     tcode = tcode[:positions[1]] + y + tcode[positions[1]+1:]
@@ -41,8 +102,10 @@ def bruteforce(code):
     codelist = list(dict.fromkeys(codelist))
     print(codelist)
     print("There are " + str(len(codelist)) + " possibilities")
+    return 0
 
 
+#Main
 try:
     numCards = int(input("Number of Cards Acquired:"))
     if numCards > 3:
@@ -56,6 +119,8 @@ except:
 for i in range(int(numCards)):
     c = input("Enter Card " + str(i+1) + ":")
     card.append(c)
+
+code = card[0]
 
 for c in card:
     for i in range( len(c) ):
